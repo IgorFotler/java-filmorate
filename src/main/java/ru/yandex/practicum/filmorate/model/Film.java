@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import ru.yandex.practicum.filmorate.validator.NotBeforeCinemaDate;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 @AllArgsConstructor
