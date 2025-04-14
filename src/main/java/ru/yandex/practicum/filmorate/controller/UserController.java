@@ -23,6 +23,9 @@ public class UserController {
     public User create(@RequestBody @Valid User user) {
         log.info("Получен HTTP-запрос на создание пользователя: {}", user);
         user.setId(idCounter++);
+        if (user.getName() == null) {
+            user.setName(user.getLogin());
+        }
         idToUser.put(user.getId(), user);
         log.info("Успешно обработан HTTP-запрос на создание пользователя: {}", user);
         return user;

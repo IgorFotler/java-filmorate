@@ -18,7 +18,7 @@ public class Film {
     @NotEmpty(message = "Название не должно быть null или пустое")
     private String name;
 
-    @Size(min = 0, max = 200, message = "Длина описания не может превышать 200 символов")
+    @Size(max = 200, message = "Длина описания не может превышать 200 символов")
     private String description;
 
     @NotBeforeCinemaDate
