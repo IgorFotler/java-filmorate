@@ -16,9 +16,11 @@ public class User {
     @NotEmpty(message = "Логин не должен быть null или пуст")
     private String login;
 
+    @NotNull(message = "Поле email не должно быть null")
     @Email
     private String email;
 
+    @NotNull(message = "Дата рождения не должна быть null")
     @PastOrPresent
     private LocalDate birthday;
 }

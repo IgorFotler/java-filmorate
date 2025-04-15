@@ -23,9 +23,7 @@ public class UserController {
     public User create(@RequestBody @Valid User user) {
         log.info("Получен HTTP-запрос на создание пользователя: {}", user);
         user.setId(idCounter++);
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
+        checkName(user);
         idToUser.put(user.getId(), user);
         log.info("Успешно обработан HTTP-запрос на создание пользователя: {}", user);
         return user;
@@ -48,8 +46,15 @@ public class UserController {
            throw new UserNotFoundException(errorMessage);
         }
 
+        checkName(user);
         idToUser.put(user.getId(), user);
         log.info("Успешно выполнен HTTP-запрос на обновление пользователя: {}", user);
         return user;
+    }
+
+    private void checkName(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
     }
 }

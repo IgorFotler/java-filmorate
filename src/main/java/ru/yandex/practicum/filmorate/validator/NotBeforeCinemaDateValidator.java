@@ -10,9 +10,6 @@ public class NotBeforeCinemaDateValidator implements ConstraintValidator<NotBefo
 
     @Override
     public boolean isValid(LocalDate release, ConstraintValidatorContext context) {
-        if (release == null) {
-            return false;
-        }
-        return !release.isBefore(firstFilmDate);
+        return release != null && release.isAfter(firstFilmDate);
     }
 }
