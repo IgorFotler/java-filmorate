@@ -26,6 +26,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiError handleUncaught(Exception exception) {
-        return ApiError.builder().errorCode(HttpStatus.NOT_FOUND.value()).description(exception.getMessage()).build();
+        return ApiError.builder().errorCode(HttpStatus.BAD_REQUEST.value()).description(exception.getMessage()).build();
     }
 }
