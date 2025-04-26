@@ -7,6 +7,8 @@ import lombok.*;
 import ru.yandex.practicum.filmorate.validator.NotBeforeCinemaDate;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,4 +27,15 @@ public class Film {
 
     @Positive
     private int duration;
+
+    @Getter
+    final Set<Long> likes = new HashSet<>();
+
+    public void addLike(Long userId) {
+        likes.add(userId);
+    }
+
+    public void removeLike(Long userId) {
+        likes.remove(userId);
+    }
 }
