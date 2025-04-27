@@ -1,18 +1,15 @@
 package ru.yandex.practicum.filmorate.service;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FilmService {
@@ -58,14 +55,7 @@ public class FilmService {
         filmStorage.update(filmById);
     }
 
-    public List<Film> getTopFilms(Integer count) {
-        if (count == null) {
-            count = 10;
-        }
-        return filmStorage.getAll()
-                .stream()
-                .sorted(Comparator.comparingInt(film -> -film.getLikes().size()))
-                .limit(count)
-                .collect(Collectors.toList());
+    public List<Film> getTopFilms(@Positive Integer count) {
+        return filmStorage.getTopFilms(count);
     }
 }

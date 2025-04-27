@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -63,4 +65,17 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new FilmNotFoundException(errorMessage);
         }
     }
+
+    @Override
+    public List<Film> getTopFilms(@Positive Integer count) {
+        if (count == null) {
+            count = 10;
+        }
+        return getAll()
+                .stream()
+                .sorted(Comparator.comparingInt(film -> -film.getLikes().size()))
+                .limit(count)
+                .collect(Collectors.toList());
+    }
 }
+

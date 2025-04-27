@@ -29,6 +29,7 @@ public class FilmController {
     public List<Film> getAll() {
         log.info("Получен HTTP-запрос на получение фильмов");
         List<Film> allFilms = filmService.getAll();
+        log.info("Успешно обработан HTTP-запрос на получение фильмов");
         return allFilms;
     }
 
@@ -64,11 +65,16 @@ public class FilmController {
 
     @DeleteMapping("/{filmId}/like/{userId}")
     public void removeLike(@PathVariable Long filmId, @PathVariable Long userId) {
+        log.info("Получен HTTP-запрос на удаление лайка фильма: {} от пользователя: {}", filmId, userId);
         filmService.removeLike(filmId, userId);
+        log.info("Успешно обработан HTTP-запрос на удаление лайка фильма: {} от пользователя: {}", filmId, userId);
     }
 
     @GetMapping("/popular")
-    public List<Film> getTpFilms(Integer count) {
-        return filmService.getTopFilms(count);
+    public List<Film> getTopFilms(Integer count) {
+        log.info("Получен HTTP-запрос на получение топ-{} популярных фильмов", count);
+        List<Film> topFilms = filmService.getTopFilms(count);
+        log.info("Успешно обработан HTTP-запрос на получение топ-{} популярных фильмов", count);
+        return topFilms;
     }
 }
