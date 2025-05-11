@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -18,41 +19,41 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public User create(@RequestBody @Valid User user) {
-        log.info("Получен HTTP-запрос на создание пользователя: {}", user);
-        User createdUser = userService.create(user);
-        log.info("Успешно обработан HTTP-запрос на создание пользователя: {}", user);
+    public UserDto create(@RequestBody @Valid UserDto userDto) {
+        log.info("Получен HTTP-запрос на создание пользователя: {}", userDto);
+        UserDto createdUser = userService.create(userDto);
+        log.info("Успешно обработан HTTP-запрос на создание пользователя: {}", userDto);
         return createdUser;
     }
 
     @GetMapping
-    public List<User> getAll() {
+    public List<UserDto> getAll() {
         log.info("Получен HTTP-запрос на получение пользователей");
-        List<User> allUsers = userService.getAll();
+        List<UserDto> allUsers = userService.getAll();
         return allUsers;
     }
 
     @GetMapping("/{id}")
-    public User getById(@PathVariable Long id) {
+    public UserDto getById(@PathVariable Long id) {
         log.info("Получен HTTP-запрос на получение пользователя по id: {}", id);
-        User user = userService.getById(id);
-        log.debug("Найденный пользователь: {}", user);
-        return user;
+        UserDto userDto = userService.getById(id);
+        log.debug("Найденный пользователь: {}", userDto);
+        return userDto;
     }
 
     @PutMapping
-    public User update(@RequestBody @Valid User user) {
-        log.info("Получен HTTP-запрос на обновление пользователя: {}", user);
-        userService.update(user);
-        log.info("Успешно выполнен HTTP-запрос на обновление пользователя: {}", user);
-        return user;
+    public UserDto update(@RequestBody @Valid UserDto userDto) {
+        log.info("Получен HTTP-запрос на обновление пользователя: {}", userDto);
+        userService.update(userDto);
+        log.info("Успешно выполнен HTTP-запрос на обновление пользователя: {}", userDto);
+        return userDto;
     }
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         log.info("Получен HTTP-запрос на удаление пользователя по id: {}", id);
         userService.deleteById(id);
-        log.debug("Успешно выполнен HTTP-запрос на удаление пользователя с id {}", id);
+        log.info("Успешно выполнен HTTP-запрос на удаление пользователя с id {}", id);
     }
 
     @PutMapping("/{userId}/friends/{friendId}")
@@ -66,21 +67,20 @@ public class UserController {
     public void removeFriend(@PathVariable Long userId, @PathVariable Long friendId) {
         log.info("Получен HTTP-запрос на удаление из друзей пользователя с id {}", friendId);
         userService.removeFriend(userId, friendId);
-        log.info("Успешно выполнен HTTP-запрос на удаление из друзей пользователяс с id {}", friendId);
     }
 
     @GetMapping("/{userId}/friends")
-    public List<User> getFriends(@PathVariable Long userId) {
+    public List<UserDto> getFriends(@PathVariable Long userId) {
         log.info("Получен HTTP-запрос на список друзей пользователя с id {}", userId);
-        List<User> friends = userService.getFriends(userId);
+        List<UserDto> friends = userService.getFriends(userId);
         log.info("Успешно обработан HTTP-запрос на получение списка друзей пользователя с id {}", userId);
         return friends;
     }
 
     @GetMapping("/{firstUserId}/friends/common/{secondUserId}")
-    public List<User> getCommonFriends(@PathVariable Long firstUserId, @PathVariable Long secondUserId) {
+    public List<UserDto> getCommonFriends(@PathVariable Long firstUserId, @PathVariable Long secondUserId) {
         log.info("Получен запрос на получение общих друзей у пользователей с id {} и {}", firstUserId, secondUserId);
-        List<User> commonFriends = userService.getCommonFriends(firstUserId, secondUserId);
+        List<UserDto> commonFriends = userService.getCommonFriends(firstUserId, secondUserId);
         log.info("Обработан запрос на получение общих друзей у пользователей с id {} и {}", firstUserId, secondUserId);
         return commonFriends;
     }

@@ -1,17 +1,15 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class User {
+public class UserDto {
     private Long id;
     private String name;
 
@@ -26,15 +24,5 @@ public class User {
     @NotNull(message = "Дата рождения не должна быть null")
     @PastOrPresent
     private LocalDate birthday;
-
-    @Getter
-    final Set<Long> friendIds = new HashSet<>();
-
-    public void addFriend(Long friendId) {
-        friendIds.add(friendId);
-    }
-
-    public void removeFriend(Long friendId) {
-        friendIds.remove(friendId);
-    }
 }
+
