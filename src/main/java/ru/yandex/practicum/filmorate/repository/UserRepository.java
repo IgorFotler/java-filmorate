@@ -113,6 +113,7 @@ public class UserRepository {
     }
 
     public List<User> getFriends(Long userId) {
+        checkId(userId);
         List<Integer> friendsId = jdbcTemplate.queryForList("SELECT friend_id FROM friends WHERE user_id = ?", new Object[]{userId}, Integer.class);
         List<User> friends = new ArrayList<>();
         for (Integer id : friendsId) {
