@@ -13,11 +13,11 @@ public class GenreRowMapper implements RowMapper<Genre> {
     @Override
     public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
         Integer genreId = rs.getInt("id");
-        String description = rs.getString("description");
+        String name = rs.getString("name");
 
         return Genre.builder()
                 .id(genreId)
-                .description(description)
+                .name(name)
                 .build();
     }
 }

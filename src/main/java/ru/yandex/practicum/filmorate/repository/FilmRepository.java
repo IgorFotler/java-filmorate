@@ -47,7 +47,6 @@ public class FilmRepository {
         }
 
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
-            //jdbcTemplate.update("DELETE FROM genre_items WHERE film_id = ?", filmId); --нужно будет вставить при обновлении
             for (Genre genre : film.getGenres()) {
                 jdbcTemplate.update("INSERT INTO genre_items (film_id, genre_id) VALUES (?, ?)", filmId, genre.getId());
             }
