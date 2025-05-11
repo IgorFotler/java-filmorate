@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
@@ -11,7 +10,6 @@ import java.util.*;
 
 import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.checkName;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Primary

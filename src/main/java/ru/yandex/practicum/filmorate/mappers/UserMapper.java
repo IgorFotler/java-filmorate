@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.mappes;
+package ru.yandex.practicum.filmorate.mappers;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dto.UserDto;

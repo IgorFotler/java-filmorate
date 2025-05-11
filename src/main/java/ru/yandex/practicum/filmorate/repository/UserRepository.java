@@ -53,24 +53,13 @@ public class UserRepository {
     }
 
     public User getById(Long id) {
-//        if (jdbcTemplate.queryForObject("SELECT NOT EXISTS(SELECT 1 FROM users WHERE id = ?)", Boolean.class, id)) {
-//            String errorMessage = String.format("Пользователь с id %d не найден.", id);
-//            log.error(errorMessage);
-//            throw new UserNotFoundException(errorMessage);
-//        }
-        checkId(id);
+        checkUserId(id);
         return jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", userRowMapper, id);
     }
 
     public User update(User user) {
         Long id = user.getId();
-
-//        if (jdbcTemplate.queryForObject("SELECT NOT EXISTS(SELECT 1 FROM users WHERE id = ?)", Boolean.class, id)) {
-//            String errorMessage = String.format("Пользователь с id %d не найден.", id);
-//            log.error(errorMessage);
-//            throw new UserNotFoundException(errorMessage);
-//        }
-        checkId(id);
+        checkUserId(id);
         jdbcTemplate.update(
                 "UPDATE users SET name = ?, login = ?, email = ?, birthday = ? WHERE id = ?",
                 user.getName(),
@@ -83,18 +72,13 @@ public class UserRepository {
     }
 
     public void deleteById(Long id) {
-//        if (jdbcTemplate.queryForObject("SELECT NOT EXISTS(SELECT 1 FROM users WHERE id = ?)", Boolean.class, id)) {
-//            String errorMessage = String.format("Пользователь с id %d не найден.", id);
-//            log.error(errorMessage);
-//            throw new UserNotFoundException(errorMessage);
-//        }
-        checkId(id);
+        checkUserId(id);
         jdbcTemplate.update("DELETE FROM users WHERE id = ?", id);
     }
 
     public void addFriend(Long userId, Long friendId) {
-        checkId(userId);
-        checkId(friendId);
+        checkUserId(userId);
+        checkUserId(friendId);
         if (userId.equals(friendId)) {
             throw new IllegalArgumentException("Введен собственный id");
         }
@@ -102,8 +86,8 @@ public class UserRepository {
     }
 
     public void removeFriend(Long userId, Long friendId) {
-        checkId(userId);
-        checkId(friendId);
+        checkUserId(userId);
+        checkUserId(friendId);
         int rowsDeleted = jdbcTemplate.update("DELETE FROM friends WHERE user_id = ? AND friend_id = ?", userId, friendId);
         if (rowsDeleted == 0) {
             log.info("Не удалось удалить записи из таблицы Friends");
@@ -113,7 +97,7 @@ public class UserRepository {
     }
 
     public List<User> getFriends(Long userId) {
-        checkId(userId);
+        checkUserId(userId);
         List<Integer> friendsId = jdbcTemplate.queryForList("SELECT friend_id FROM friends WHERE user_id = ?", new Object[]{userId}, Integer.class);
         List<User> friends = new ArrayList<>();
         for (Integer id : friendsId) {
@@ -142,7 +126,7 @@ public class UserRepository {
         return commonFriends;
     }
 
-    public void checkId(Long id) {
+    public void checkUserId(Long id) {
         if (jdbcTemplate.queryForObject("SELECT NOT EXISTS(SELECT 1 FROM users WHERE id = ?)", Boolean.class, id)) {
             String errorMessage = String.format("Пользователь с id %d не найден.", id);
             log.error(errorMessage);
