@@ -20,7 +20,6 @@ import java.util.List;
 public class UserRepository {
     private final JdbcTemplate jdbcTemplate;
     private final UserRowMapper userRowMapper;
-    String CREATE_QUERY = "INSERT INTO users (name, login, email, birthday) values (?, ?, ?, ?);";
 
     public User create(User user) {
 
@@ -28,7 +27,7 @@ public class UserRepository {
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
-                    .prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS);
+                    .prepareStatement("INSERT INTO users (name, login, email, birthday) values (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 
             ps.setObject(1, user.getName());
             ps.setObject(2, user.getLogin());
