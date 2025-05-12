@@ -80,9 +80,11 @@ public class FilmRepository {
                 film.getMpa().getId(),
                 id
         );
-        jdbcTemplate.update("DELETE FROM genre_items WHERE film_id = ?", id);
-        for (Genre genre : film.getGenres()) {
-            jdbcTemplate.update("INSERT INTO genre_items (film_id, genre_id) VALUES (?, ?)", id, genre.getId());
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+            jdbcTemplate.update("DELETE FROM genre_items WHERE film_id = ?", id);
+            for (Genre genre : film.getGenres()) {
+                jdbcTemplate.update("INSERT INTO genre_items (film_id, genre_id) VALUES (?, ?)", id, genre.getId());
+            }
         }
         return film;
     }
