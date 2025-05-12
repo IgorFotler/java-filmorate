@@ -22,6 +22,8 @@ public class FilmRepository {
     private final FilmRowMapper filmRowMapper;
 
     public Film create(Film film) {
+        validationGenre(film);
+        validationMpa(film);
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -69,6 +71,9 @@ public class FilmRepository {
     }
 
     public Film update(Film film) {
+        validationGenre(film);
+        validationMpa(film);
+
         Long id = film.getId();
         checkFilmId(id);
         jdbcTemplate.update(
@@ -113,6 +118,24 @@ public class FilmRepository {
             String errorMessage = String.format("Фильм с id %d не найден.", id);
             log.error(errorMessage);
             throw new FilmNotFoundException(errorMessage);
+        }
+    }
+
+    public void validationMpa(Film film) {
+        if (film.getMpa() != null) {
+            if (film.getMpa().getId() < 1 || film.getMpa().getId() > 5) {
+                throw new FilmNotFoundException("MPA ID должен быть в диапазоне от 1 до 6");
+            }
+        }
+    }
+
+    public void validationGenre(Film film) {
+        if (film.getGenres() != null) {
+            for (Genre genre : film.getGenres()) {
+                if (genre.getId() < 1 || genre.getId() > 6) {
+                    throw new FilmNotFoundException("Genre ID должен быть в диапазоне от 1 до 6");
+                }
+            }
         }
     }
 }
