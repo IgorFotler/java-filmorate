@@ -48,7 +48,11 @@ public class FilmRepository {
 
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             for (Genre genre : film.getGenres()) {
-                jdbcTemplate.update("INSERT INTO genre_items (film_id, genre_id) VALUES (?, ?)", filmId, genre.getId());
+                jdbcTemplate.update("INSERT INTO genre_items (film_id, genre_id) " +
+                        "SELECT ?, ? FROM dual " +
+                        "WHERE NOT EXISTS (" +
+                        "SELECT 1 FROM genre_items WHERE film_id = ? AND genre_id = ?" +
+                        ")", filmId, genre.getId(), filmId, genre.getId());
             }
         }
         return film;
