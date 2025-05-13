@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -17,7 +18,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User create(User user) {
         user.setId(idCounter++);
-        checkName(user);
+        UserStorageUtil.checkName(user);
         idToUser.put(user.getId(), user);
         return user;
     }
@@ -50,7 +51,7 @@ public class InMemoryUserStorage implements UserStorage {
             throw new UserNotFoundException(errorMessage);
         }
 
-        checkName(user);
+        UserStorageUtil.checkName(user);
         idToUser.put(user.getId(), user);
         return user;
     }
@@ -66,10 +67,50 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
-    private void checkName(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
+    public void addFriend(Long userId, Long friendId) {
+        User user = getById(userId);
+        User friend = getById(friendId);
+
+        if (userId.equals(friendId)) {
+            throw new IllegalArgumentException("Введен собственный id");
         }
+
+        user.addFriend(friendId);
+        friend.addFriend(userId);
+
+        update(user);
+        update(friend);
+    }
+
+    public void removeFriend(Long userId, Long friendId) {
+        User user = getById(userId);
+        User friend = getById(friendId);
+
+        if (userId.equals(friendId)) {
+            throw new IllegalArgumentException("Введен собственный id");
+        }
+
+        user.removeFriend(friendId);
+        friend.removeFriend(userId);
+
+        update(user);
+        update(friend);
+    }
+
+
+    public List<User> getFriends(Long userId) {
+        User user = getById(userId);
+        return user.getFriendIds().stream()
+                .map(id -> getById(id))
+                .collect(Collectors.toList());
+    }
+
+    public List<User> getCommonFriends(Long firstUserId, Long secondUserId) {
+        Set<Long> firstUserFriendIds = getById(firstUserId).getFriendIds();
+        Set<Long> secondUserFriendIds = getById(secondUserId).getFriendIds();
+        return firstUserFriendIds.stream()
+                .filter(id -> secondUserFriendIds.contains(id))
+                .map(id -> getById(id))
+                .collect(Collectors.toList());
     }
 }
-

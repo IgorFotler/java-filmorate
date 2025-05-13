@@ -1,21 +1,21 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.validator.NotBeforeCinemaDate;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Film {
+public class FilmDto {
     private Long id;
 
     @NotEmpty(message = "Название не должно быть null или пустое")
@@ -33,15 +33,4 @@ public class Film {
     private Mpa mpa;
 
     private List<Genre> genres;
-
-    @Getter
-    final Set<Long> likes = new HashSet<>();
-
-    public void addLike(Long userId) {
-        likes.add(userId);
-    }
-
-    public void removeLike(Long userId) {
-        likes.remove(userId);
-    }
 }
