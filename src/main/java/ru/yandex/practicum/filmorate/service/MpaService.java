@@ -18,6 +18,7 @@ public class MpaService {
     private final MpaStorage mpaStorage;
 
     public List<Mpa> getAll() {
+        log.info("Получен запрос на получение списка рейтингов");
         if (mpaStorage.getAll().isEmpty()) {
             log.info("Ошибка валидации, список с рейтингами пуст");
             throw new NotFoundException("Список с рейтингами пуст");
@@ -29,6 +30,7 @@ public class MpaService {
     }
 
     public Mpa getById(Integer id) {
+        log.info("Получен HTTP-запрос на получение рейтинга по id: {}", id);
         return mpaStorage.getById(id)
                 .orElseThrow(() -> new NotFoundException("Рейтинг не найден по id: " + id));
     }

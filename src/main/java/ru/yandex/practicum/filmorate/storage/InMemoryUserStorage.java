@@ -18,7 +18,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User create(User user) {
         user.setId(idCounter++);
-        checkName(user);
+        UserStorageUtil.checkName(user);
         idToUser.put(user.getId(), user);
         return user;
     }
@@ -51,7 +51,7 @@ public class InMemoryUserStorage implements UserStorage {
             throw new UserNotFoundException(errorMessage);
         }
 
-        checkName(user);
+        UserStorageUtil.checkName(user);
         idToUser.put(user.getId(), user);
         return user;
     }
@@ -64,12 +64,6 @@ public class InMemoryUserStorage implements UserStorage {
             String errorMessage = String.format("Пользователь с id %d не найден", id);
             log.error(errorMessage);
             throw new UserNotFoundException(errorMessage);
-        }
-    }
-
-    public static void checkName(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
         }
     }
 

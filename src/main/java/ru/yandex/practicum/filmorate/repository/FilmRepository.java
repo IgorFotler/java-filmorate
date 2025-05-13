@@ -8,11 +8,16 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.repository.mapper.FilmRowMapper;
 
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -61,8 +66,52 @@ public class FilmRepository {
     }
 
     public List<Film> getAll() {
-        String query = "SELECT * FROM films;";
-        return jdbcTemplate.query(query, filmRowMapper);
+        String sql = "SELECT f.id AS film_id, f.name, f.description, f.release_date, f.duration, " +
+                "m.mpa_id, m.name AS mpa_name, " +
+                "g.id AS genre_id, g.name AS genre_name " +
+                "FROM films f " +
+                "LEFT JOIN mpa m ON f.mpa_id = m.mpa_id " +
+                "LEFT JOIN genre_items gi ON f.id = gi.film_id " +
+                "LEFT JOIN genres g ON gi.genre_id = g.id " +
+                "ORDER BY f.id";
+
+        Map<Long, Film> filmMap = new LinkedHashMap<>();
+
+        jdbcTemplate.query(sql, rs -> {
+            Long filmId = rs.getLong("film_id");
+
+            Film film = filmMap.computeIfAbsent(filmId, id -> {
+                try {
+                    return Film.builder()
+                            .id(id)
+                            .name(rs.getString("name"))
+                            .description(rs.getString("description"))
+                            .releaseDate(rs.getDate("release_date").toLocalDate())
+                            .duration(rs.getInt("duration"))
+                            .mpa(Mpa.builder()
+                                    .id(rs.getInt("mpa_id"))
+                                    .name(rs.getString("name"))
+                                    .build())
+                            .genres(new ArrayList<>())
+                            .build();
+                } catch (SQLException e) {
+                    throw new RuntimeException("Ошибка при маппинге фильма", e);
+                }
+            });
+
+            int genreId = rs.getInt("genre_id");
+            if (!rs.wasNull()) {
+                Genre genre = Genre.builder()
+                        .id(genreId)
+                        .name(rs.getString("name"))
+                        .build();
+                if (!film.getGenres().contains(genre)) {
+                    film.getGenres().add(genre);
+                }
+            }
+        });
+
+        return new ArrayList<>(filmMap.values());
     }
 
     public Film getById(Long id) {
@@ -107,10 +156,64 @@ public class FilmRepository {
     }
 
     public List<Film> getTopFilms(Integer count) {
-        return jdbcTemplate.query("SELECT F.* FROM films AS F JOIN (SELECT film_id, " +
-                "COUNT(user_id) AS like_count FROM likes GROUP BY film_id) AS L " +
-                "ON F.id = L.film_id " +
-                "ORDER BY L.like_count DESC LIMIT ?", filmRowMapper, count);
+        String sql = "SELECT f.id, f.name, f.description, f.release_date, f.duration, " +
+               " m.mpa_id, m.name AS mpa_name, " +
+               "g.id AS genre_id, g.name AS genre_name " +
+        "FROM films f " +
+        "LEFT JOIN mpa m ON f.mpa_id = m.mpa_id " +
+        "LEFT JOIN genre_items gi ON f.id = gi.film_id " +
+        "LEFT JOIN genres g ON gi.genre_id = g.id " +
+        "LEFT JOIN (SELECT film_id, COUNT(user_id) AS like_count " +
+            "FROM likes " +
+            "GROUP BY film_id) " +
+        "l ON f.id = l.film_id " +
+        "ORDER BY l.like_count DESC NULLS LAST " +
+        "LIMIT ? ";
+
+        return jdbcTemplate.query(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, count);
+            return ps;
+        }, rs -> {
+            Map<Long, Film> filmMap = new LinkedHashMap<>();
+
+            while (rs.next()) {
+                Long filmId = rs.getLong("id");
+
+                Film film = filmMap.computeIfAbsent(filmId, id -> {
+                    try {
+                        return Film.builder()
+                                .id(id)
+                                .name(rs.getString("name"))
+                                .description(rs.getString("description"))
+                                .releaseDate(rs.getDate("release_date").toLocalDate())
+                                .duration(rs.getInt("duration"))
+                                .mpa(Mpa.builder()
+                                        .id(rs.getInt("mpa_id"))
+                                        .name(rs.getString("name"))
+                                        .build())
+                                .genres(new ArrayList<>())
+                                .build();
+                    } catch (SQLException e) {
+                        throw new RuntimeException("Ошибка при маппинге фильма", e);
+                    }
+                });
+
+                int genreId = rs.getInt("genre_id");
+                if (!rs.wasNull()) {
+                    Genre genre = Genre.builder()
+                            .id(genreId)
+                            .name(rs.getString("name"))
+                            .build();
+
+                    if (!film.getGenres().contains(genre)) {
+                        film.getGenres().add(genre);
+                    }
+                }
+            }
+
+            return new ArrayList<>(filmMap.values());
+        });
     }
 
     public void checkFilmId(Long id) {

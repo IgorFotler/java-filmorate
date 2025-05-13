@@ -37,7 +37,7 @@ public class FilmController {
     public FilmDto getById(@PathVariable Long id) {
         log.info("Получен HTTP-запрос на получение фильма по id: {}", id);
         FilmDto filmDto = filmService.getById(id);
-        log.debug("Найденный фильм: {}", filmDto);
+        log.info("Найденный фильм: {}", filmDto);
         return filmDto;
     }
 

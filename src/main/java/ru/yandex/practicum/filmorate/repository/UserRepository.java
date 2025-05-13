@@ -79,9 +79,6 @@ public class UserRepository {
     public void addFriend(Long userId, Long friendId) {
         checkUserId(userId);
         checkUserId(friendId);
-        if (userId.equals(friendId)) {
-            throw new IllegalArgumentException("Введен собственный id");
-        }
         jdbcTemplate.update("INSERT INTO friends (user_id, friend_id) VALUES(?,?)", userId, friendId);
     }
 
@@ -107,9 +104,8 @@ public class UserRepository {
     }
 
     public List<User> getCommonFriends(Long firstUserId, Long secondUserId) {
-        if (firstUserId.equals(secondUserId)) {
-            throw new IllegalArgumentException("Введен собственный id");
-        }
+        checkUserId(firstUserId);
+        checkUserId(secondUserId);
 
         List<Integer> userFriends = jdbcTemplate.queryForList("SELECT friend_id FROM friends WHERE user_id = ?", new Object[]{firstUserId}, Integer.class);
         List<Integer> otherUserFriends = jdbcTemplate.queryForList("SELECT friend_id FROM friends WHERE user_id = ?", new Object[]{secondUserId}, Integer.class);

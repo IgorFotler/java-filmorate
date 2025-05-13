@@ -44,6 +44,9 @@ public class UserService {
     }
 
     public void addFriend(Long userId, Long friendId) {
+        if (userId.equals(friendId)) {
+            throw new IllegalArgumentException("Введен собственный id");
+        }
         userStorage.addFriend(userId, friendId);
     }
 
@@ -59,6 +62,9 @@ public class UserService {
 
 
     public List<UserDto> getCommonFriends(Long firstUserId, Long secondUserId) {
+        if (firstUserId.equals(secondUserId)) {
+            throw new IllegalArgumentException("Введен собственный id");
+        }
         return userStorage.getCommonFriends(firstUserId, secondUserId).stream()
                 .map(userMapper::convertToUserDto)
                 .toList();

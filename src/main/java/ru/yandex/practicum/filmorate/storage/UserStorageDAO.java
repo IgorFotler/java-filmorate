@@ -8,8 +8,6 @@ import ru.yandex.practicum.filmorate.repository.UserRepository;
 
 import java.util.*;
 
-import static ru.yandex.practicum.filmorate.storage.InMemoryUserStorage.checkName;
-
 @Service
 @RequiredArgsConstructor
 @Primary
@@ -19,7 +17,7 @@ public class UserStorageDAO implements UserStorage {
 
     @Override
     public User create(User user) {
-        checkName(user);
+        UserStorageUtil.checkName(user);
         return userRepository.create(user);
     }
 
@@ -35,7 +33,7 @@ public class UserStorageDAO implements UserStorage {
 
     @Override
     public User update(User user) {
-        checkName(user);
+        UserStorageUtil.checkName(user);
         userRepository.update(user);
         return user;
     }
