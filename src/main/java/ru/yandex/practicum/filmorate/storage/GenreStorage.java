@@ -16,8 +16,8 @@ import java.util.Optional;
 @Slf4j
 public class GenreStorage {
 
-    private JdbcTemplate jdbcTemplate;
-    private GenreRowMapper genreRowMapper;
+    private final JdbcTemplate jdbcTemplate;
+    private final GenreRowMapper genreRowMapper;
 
     public List<Genre> getAll() {
         return jdbcTemplate.query("SELECT * FROM genres", genreRowMapper);

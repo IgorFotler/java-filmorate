@@ -16,8 +16,8 @@ import java.util.Optional;
 @Slf4j
 public class MpaStorage {
 
-    private JdbcTemplate jdbcTemplate;
-    private MpaRowMapper mpaRowMapper;
+    private final JdbcTemplate jdbcTemplate;
+    private final MpaRowMapper mpaRowMapper;
 
     public List<Mpa> getAll() {
         return jdbcTemplate.query("SELECT * FROM MPA", mpaRowMapper);
