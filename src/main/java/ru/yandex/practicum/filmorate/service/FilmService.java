@@ -1,12 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.mappers.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 
@@ -15,24 +14,30 @@ import java.util.List;
 public class FilmService {
 
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    private final FilmMapper filmMapper;
 
-    public Film create(Film film) {
+    public FilmDto create(FilmDto filmDto) {
+        Film film = filmMapper.convertToFilm(filmDto);
         filmStorage.create(film);
-        return film;
+        return filmMapper.convertToFilmDto(film);
+
     }
 
-    public List<Film> getAll() {
-        return filmStorage.getAll();
+    public List<FilmDto> getAll() {
+        return filmStorage.getAll().stream()
+                .map(filmMapper::convertToFilmDto)
+                .toList();
     }
 
-    public Film getById(Long id) {
-        return filmStorage.getById(id);
+    public FilmDto getById(Long id) {
+        Film film = filmStorage.getById(id);
+        return filmMapper.convertToFilmDto(film);
     }
 
-    public Film update(Film film) {
+    public FilmDto update(FilmDto filmDto) {
+        Film film = filmMapper.convertToFilm(filmDto);
         filmStorage.update(film);
-        return film;
+        return filmMapper.convertToFilmDto(film);
     }
 
     public void deleteById(Long id) {
@@ -40,22 +45,16 @@ public class FilmService {
     }
 
     public void addLike(Long filmId, Long userId) {
-        Film filmById = filmStorage.getById(filmId);
-        User user = userStorage.getById(userId);
-
-        filmById.addLike(userId);
-        filmStorage.update(filmById);
+        filmStorage.addLike(filmId, userId);
     }
 
     public void removeLike(Long filmId, Long userId) {
-        Film filmById = filmStorage.getById(filmId);
-        User user = userStorage.getById(userId);
-
-        filmById.removeLike(userId);
-        filmStorage.update(filmById);
+        filmStorage.removeLike(filmId, userId);
     }
 
-    public List<Film> getTopFilms(@Positive Integer count) {
-        return filmStorage.getTopFilms(count);
+    public List<FilmDto> getTopFilms(Integer count) {
+        return filmStorage.getTopFilms(count).stream()
+                .map(filmMapper::convertToFilmDto)
+                .toList();
     }
 }
